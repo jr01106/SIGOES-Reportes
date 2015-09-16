@@ -1,0 +1,140 @@
+SELECT 
+
+T1.ID,T1.post_title,T1.post_author,
+CASE T2.meta_key WHEN 'first_name' THEN T2.meta_value  END AS nombre,
+CASE T2.meta_key WHEN 'last_name' THEN T2.meta_value  END AS apellido,
+CASE T2.meta_key WHEN  'wp_capabilities' THEN T2.meta_value  END AS rol,
+T1.post_type,T1.post_status,T1.post_date
+
+FROM wp_posts T1 inner join wp_usermeta T2 on T1.post_author = T2.user_id ORDER BY 7;
+
+
+
+-------------------------------------------------------------------------------------------
+SELECT 
+DISTINCT
+			T1.ID,
+			T1.post_title,
+			T1.post_author,
+			CASE WHEN T2.meta_key = 'first_name' THEN T2.meta_value || ' ' || (CASE WHEN T2.meta_key = 'last_name' THEN T2.meta_value ELSE '' END)
+ ELSE '' END AS Nombre,
+			
+                        CASE WHEN T2.meta_key = 'wp_capabilities' THEN T2.meta_value ELSE '' END AS rol,
+			T1.post_type,
+			T1.post_status,
+			T1.post_date
+FROM 
+	wp_posts T1 inner join wp_usermeta T2 on T1.post_author = T2.user_id
+
+WHERE T2.meta_key IN('first_name','last_name') AND T2.meta_value IS NOT NULL
+ORDER BY 7;
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+SELECT 
+DISTINCT
+            
+            user_id ID, 
+CASE 
+            WHEN    meta_key = 'first_name'
+            THEN     meta_value
+            ELSE      ' '
+            END|| ' ' ||(
+CASE 
+            WHEN    meta_key = 'last_name'
+            THEN     meta_value
+            ELSE      ' '
+            END) AS Nombre,
+CASE   
+            WHEN    meta_key = 'wp_capabilities' 
+            THEN     meta_value ELSE '' 
+            END AS  Rol
+FROM
+            wp_usermeta;
+--------------------------------------------------------------------------------------
+SELECT DISTINCT
+CASE WHEN meta_key = 'last_name'
+THEN meta_value
+ELSE ' '
+END AS apellido
+FROM wp_usermeta
+WHERE meta_key = 'last_name'
+LIMIT 0 , 30
+
+( SELECT DISTINCT CASE WHEN    meta_key = 'last_name' THEN meta_value ELSE  ' ' END FROM wp_usermeta WHERE meta_key = 'last_name') 
+
+-------------------------------------------------------------------------
+SELECT 
+DISTINCT
+          
+CASE 
+            WHEN    meta_key = 'first_name'
+            THEN     meta_value
+            ELSE      ' '
+            END AS Nombre,
+CASE 
+            WHEN    meta_key = 'last_name'
+            THEN     meta_value
+            ELSE      ' ' 
+            END AS Apellido
+
+FROM
+            wp_usermeta;
+
+---------------------------------------------------------------------
+SELECT 
+DISTINCT
+          
+CASE 
+            WHEN    meta_key = 'first_name'
+            THEN     meta_value
+            ELSE      ' '
+            END AS Nombre,
+CASE 
+            WHEN    meta_key = 'last_name'
+            THEN     meta_value
+            ELSE      ' ' 
+            END AS Apellido
+
+FROM
+            wp_usermeta;            
+
+
+SELECT 
+                         ID, post_title, post_type, post_status
+FROM 
+                         wp_posts;
+======================================================================================================
+SELECT 
+        ID,post_title,
+        post_author,
+        (SELECT meta_value 
+          FROM wp_usermeta WHERE user_id = post_author AND meta_key = 'first_name') nombre,
+        (SELECT meta_value 
+          FROM wp_usermeta WHERE user_id = post_author AND meta_key = 'last_name') apellido,
+        (SELECT meta_value 
+          FROM wp_usermeta WHERE user_id = post_author AND meta_key = 'wp_capabilities') rol,
+
+         post_type,post_status,post_date
+ FROM  
+            wp_posts;            
+====================================================================================== anterior ya salio
+SELECT 
+        ID,post_title,
+        post_author,
+        (SELECT meta_value 
+          FROM wp_usermeta WHERE user_id = post_author AND meta_key = 'first_name') nombre,
+        (SELECT meta_value 
+          FROM wp_usermeta WHERE user_id = post_author AND meta_key = 'last_name') apellido,
+        (SELECT 
+        (CASE meta_value
+WHEN 'a:1:{s:13:"administrator";b:1;}' THEN 'Administrador' 
+WHEN 'a:1:{s:21:"gestionador_proyectos";b:1;}' THEN 'Gestionador Proyectos' 
+WHEN 'a:1:{s:22:"gestionador_coyuntural";b:1;}' THEN 'Gestionador Coyuntural' 
+WHEN 'a:1:{s:22:"gestionador_streaming";b:1;}' THEN 'Gestionador Streaming' 
+
+END)  AS rol 
+          
+          FROM wp_usermeta WHERE user_id = post_author AND meta_key = 'wp_capabilities') rol,
+
+         post_type,post_status,post_date
+ FROM  
+            wp_posts;            
